@@ -1,151 +1,167 @@
 #pragma once
 #include <d3d11.h>
 #include <vector>
-#include <exception>
-
-
-class GraphicsBuffer
+using std::vector;
+class Graphics_API
 {
 public:
-///We gonna make a virtual destructor because we will create derivate clases from this one, and so each class will provide its own destructor
-	GraphicsBuffer() = default;
-	virtual ~GraphicsBuffer()
-	{
-		if (m_pBuffer)
-		{
-			m_pBuffer->Release();
-		}
-	}
-///
-	ID3D11Buffer* m_pBuffer = nullptr;
-
-	//VertexBuffer
-	//IndexBuffer
+	Graphics_API();
+	~Graphics_API();
+	HRESULT InitDevice(HWND g_hWnd);
+	void Render();
+	ID3D11Device* g_pd3dDevice = nullptr;
+	ID3D11DeviceContext* g_pImmediateContext = nullptr;
+	IDXGISwapChain* g_pSwapChain = nullptr;
+	ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
+	ID3D11Texture2D* g_pDepthStencil = nullptr;
+	ID3D11DepthStencilView* g_DepthStencilView = nullptr;
+	HRESULT SetViewPort(int topx, int topy, int w, int h, float min, float max);
 };
-
-
-template<typename TVERTEX>
-class VertexBuffer final : public GraphicsBuffer
+Graphics_API::Graphics_API()
 {
-public:
-	VertexBuffer() = default;
-	~VertexBuffer()
-	{
-		Clear();
-	}
-
-	void Reserve(size_t numObjects)
-	{
-		m_vertexData.reserve(numObjects);
-	}
-
-	void Add(const TVERTEX& vertex)
-	{
-		m_vertexData.push_back(vertex);
-	}
-	void Add(std::vector<TVERTEX>& vertices)
-	{
-		m_vertexData.insert(m_vertexData.end(), vertices.begin(),vertices.end());
-	}
-	void Add(TVERTEX* pVertices, size_t numVer)
-	{
-		m_vertexData.insert(m_vertexData.end(),pVertices,pVertices+numVer);
-	}
-	void Clear()
-	{
-		m_vertexData.clear();
-	}
-	void CreateHardWareBuffer(ID3D11Device* pd3dDevice, unsigned int usage = D3D11_USAGE_DEFAULT)
-	{
-		D3D11_BUFFER_DESC bd;
-		memset(&bd, 0, sizeof(bd));
-
-		bd.Usage = usage;
-		bd.ByteWidth = static_cast<UINT32>(sizeof(TVERTEX)*m_vertexData.size());
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA InitData;
-		memset(&InitData, 0, sizeof(InitData));
-		InitData.pSysMem = &m_vertexData[0];
-
-		HRESULT hr = pd3dDevice->CreateBuffer(&bd, &InitData, &m_pBuffer);
-		if (FAILED(hr))
-		{
-			throw std::exception("Failed to create Vertex Buffer you idiot");
-		}
-	}
-	
-private:
-	std::vector<TVERTEX> m_vertexData;
-};
-
-template <typename TINDEX>
-
-class IndexBuffer final : public GraphicsBuffer
+}
+Graphics_API::~Graphics_API()
 {
-public:
-	IndexBuffer() = default;
-	~IndexBuffer()
-	{
-		Clear();
-	}
+}
+HRESULT Graphics_API::InitDevice(HWND g_hWnd)
+{
+	HRESULT hr = S_OK;
+	//Obtains the size of window
+	RECT rc;
+	GetClientRect(g_hWnd, &rc);
+	int width = rc.right - rc.left;
+	int height = rc.bottom - rc.top;
+	unsigned int createDeviceFlags = 0;
+#if defined (DEBUG)
+	createDeviceFlags | = D3D11_CREATE_DEVICE_DEBUG;
+#endif // _DEBUG
+	//Creating driver type vector
+	vector<D3D_DRIVER_TYPE>driverTypes;
+	driverTypes.push_back(D3D_DRIVER_TYPE_HARDWARE);
+	driverTypes.push_back(D3D_DRIVER_TYPE_WARP);
+	driverTypes.push_back(D3D_DRIVER_TYPE_REFERENCE);
+	//We are using the default levels in the D3D library
+	vector<D3D_FEATURE_LEVEL> featureLevels;
+	featureLevels.push_back(D3D_FEATURE_LEVEL_11_0);
+	featureLevels.push_back(D3D_FEATURE_LEVEL_10_1);
+	featureLevels.push_back(D3D_FEATURE_LEVEL_10_0);
 
-	void Reserve(size_t numObjects)
-	{
-		m_indexData.reserve(numObjects);
-	}
+	DXGI_SWAP_CHAIN_DESC sd;
+	memset(&sd, 0, sizeof(sd));
+	sd.BufferCount = 1;
+	sd.BufferDesc.Width = width;
+	sd.BufferDesc.Height = height;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.OutputWindow = g_hWnd;
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
+	sd.Windowed = true;
 
-	void Add(const TINDEX& index)
-	{
-		m_indexData.push_back(index);
-	}
-	void Add(std::vector<TINDEX>& indices)
-	{
-		m_indexData.insert(m_indexData.end(), indices.begin(), indices.end());
-	}
-	void Add(TINDEX* pIndices, size_t numInd)
-	{
-		m_indexData.insert(m_indexData.end(), pIndices, pIndices + numInd);
-	}
-	void Clear()
-	{
-		m_indexData.clear();
-	}
-	void CreateHardWareBuffer(ID3D11Device* pd3dDevice, unsigned int usage = D3D11_USAGE_DEFAULT)
-	{
-		D3D11_BUFFER_DESC bd;
-		memset(&bd, 0, sizeof(bd));
+	D3D_FEATURE_LEVEL selectedFL;
 
-		bd.Usage = usage;
-		bd.ByteWidth = static_cast<UINT32>(sizeof(TINDEX)*m_indexData.size());
-		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA InitData;
-		memset(&InitData, 0, sizeof(InitData));
-		InitData.pSysMem = &m_indexData[0];
-
-		HRESULT hr = pd3dDevice->CreateBuffer(&bd, &InitData, &m_pBuffer);
-		if (FAILED(hr))
+	for (size_t driverTypeIndex = 0; driverTypeIndex < driverTypes.size(); ++driverTypeIndex)
+	{
+		D3D_DRIVER_TYPE& dt = driverTypes[driverTypeIndex];
+		hr = D3D11CreateDeviceAndSwapChain(
+			nullptr,
+			dt,
+			nullptr,
+			createDeviceFlags,
+			&featureLevels[0],
+			static_cast<UINT>(featureLevels.size()),
+			D3D11_SDK_VERSION,
+			&sd,
+			&g_pSwapChain,
+			&g_pd3dDevice,
+			&selectedFL,
+			&g_pImmediateContext);
+		if (SUCCEEDED(hr))
 		{
-			throw std::exception("Failed to create Index Buffer you idiot");
+			break;
 		}
 	}
-
-	void Write(ID3D11DeviceContext* pDeviceContext , void* pData, size_t numBytes)
+	if (FAILED(hr))
 	{
-		D3D11_MAPPED_SUBRESOURCE subRes;
-		memset(&subRes, 0, sizeof(subRes));
-		//from this buffer we wanna do something
-		pDeviceContext->Map(m_pBuffer, 0, nullptr, D3D11_MAP_DISCARD, &subRes);
-		//here we write all the shit we need, the thing is that this is not relative to anything specific
-
-
-		//we later discard the original thing because we dont need it anymore
-		pDeviceContext->Unmap(m_pBuffer, 0);
+		return hr;
 	}
-private:
-	std::vector<TINDEX> m_indexData;
-};
 
+	//Creating RenderTargetView
+	ID3D11Texture2D* pBackBuffer = nullptr;
+	hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<LPVOID*>(&pBackBuffer));
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &g_pRenderTargetView);
+	pBackBuffer->Release();
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	//Creating DepthStencil texture descriptor (checks the pixels if are usable or not)
+
+	D3D11_TEXTURE2D_DESC descDepth;
+	memset(&descDepth, 0, sizeof(descDepth));
+	descDepth.Width = width;
+	descDepth.Height = height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+
+	hr = g_pd3dDevice->CreateTexture2D(&descDepth, nullptr, &g_pDepthStencil);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+
+	memset(&descDSV, 0, sizeof(descDSV));
+
+	descDSV.Format = descDepth.Format;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+
+	hr = g_pd3dDevice->CreateDepthStencilView(g_pDepthStencil, &descDSV, &g_DepthStencilView);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_DepthStencilView);
+
+	if (FAILED(SetViewPort(0, 1, 2, 3, 4.0f, 5.0f)))
+	{
+		return hr;
+	}
+
+	return hr;
+}
+void Graphics_API::Render()
+{
+	float color[4] = { 1.0f,0.0f,1.0f,1.0f };
+	g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, color);
+	g_pSwapChain->Present(DXGI_SWAP_EFFECT_DISCARD, DXGI_PRESENT_DO_NOT_WAIT);
+}
+HRESULT Graphics_API::SetViewPort(int topx, int topy, int w, int h, float min, float max)
+{
+	HRESULT hr = S_OK;
+	D3D11_VIEWPORT* vp = nullptr;
+	vp->TopLeftX = topx;
+	vp->TopLeftY = topy;
+	vp->Width = w;
+	vp->Height = h;
+	vp->MinDepth = min;
+	vp->MaxDepth = max;
+	g_pImmediateContext->RSSetViewports(1, vp);
+	return hr;
+}
