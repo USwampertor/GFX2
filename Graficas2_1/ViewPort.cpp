@@ -1,12 +1,4 @@
 #include "stdafx.h"
-#include "ViewPort.h"
+//#include "ViewPort.h"
 
 
-ViewPort::ViewPort()
-{
-}
-
-
-ViewPort::~ViewPort()
-{
-}
