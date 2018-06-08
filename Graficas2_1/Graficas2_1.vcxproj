@@ -156,11 +156,13 @@
     <ClInclude Include="Graphics_API.h" />
     <ClInclude Include="Graphics_Buffer.h" />
     <ClInclude Include="InputLayout.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="VertexType.h" />
     <ClInclude Include="ViewPort.h" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +170,7 @@
     <ClCompile Include="Graficas2_1.cpp" />
     <ClCompile Include="Graphics_API.cpp" />
     <ClCompile Include="InputLayout.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -176,6 +179,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="VertexType.cpp" />
     <ClCompile Include="ViewPort.cpp" />
   </ItemGroup>
   <ItemGroup>

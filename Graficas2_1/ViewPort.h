@@ -1,31 +1,30 @@
 #pragma once
 #include "Device.h"
 #include <d3d11.h>
+#include <DirectXMath.h>
 class ViewPort
 {
 public:
-	D3D11_VIEWPORT m_viewPort;
-	int
-		topleftx,
-		toplefty,
-		width,
-		height;
-	void CreateViewPort(Device& dev);
+	D3D11_VIEWPORT m_d3dViewPort;
+	void CreateViewPort(float width, float height, float topLeftX, float topLeftY);
+	void SetViewPort(ID3D11DeviceContext* pImmediateContext);
+	ViewPort();
+	~ViewPort();
 private:
 	float
 		minDepth = 0,
 		maxDepth = 1;
-	ViewPort();
-	~ViewPort();
 };
-void ViewPort::CreateViewPort(Device& dev)
+void ViewPort::CreateViewPort(float width, float height, float topLeftX, float topLeftY)
 {
-	//m_viewPort.TopLeftX = 0;
-	//m_viewPort.TopLeftY = 0;
-	//m_viewPort.Width = dev.width;
-	//m_viewPort.Height = dev.height;
-	//
-	//dev.m_pImmediateContext->RSSetViewports(1, &m_viewPort);
+	m_d3dViewPort.TopLeftX = topLeftX;
+	m_d3dViewPort.TopLeftY = topLeftY;
+	m_d3dViewPort.Width =  width;
+	m_d3dViewPort.Height = height;
+}
+void ViewPort::SetViewPort(ID3D11DeviceContext* pImmediateContext)
+{
+	pImmediateContext->RSSetViewports(1, &m_d3dViewPort);
 }
 ViewPort::ViewPort()
 {

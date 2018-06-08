@@ -2,12 +2,13 @@
 #include <d3d11.h>
 #include <vector>
 #include <exception>
-
+#include "InputLayout.h"
 
 class GraphicsBuffer
 {
 public:
 ///We gonna make a virtual destructor because we will create derivate classes from this one, and so each class will provide its own destructor
+
 	GraphicsBuffer() = default;
 	virtual ~GraphicsBuffer()
 	{
@@ -17,6 +18,7 @@ public:
 		}
 	}
 ///
+
 	ID3D11Buffer* m_pBuffer = nullptr;
 
 	//VertexBuffer
@@ -55,7 +57,7 @@ public:
 	{
 		m_vertexData.clear();
 	}
-	void CreateHardWareBuffer(ID3D11Device* pd3dDevice, unsigned int usage = D3D11_USAGE_DEFAULT)
+	void CreateHardWareBuffer(ID3D11Device* pd3dDevice, D3D11_USAGE usage = D3D11_USAGE_DEFAULT)
 	{
 		D3D11_BUFFER_DESC bd;
 		memset(&bd, 0, sizeof(bd));
@@ -124,7 +126,7 @@ public:
 	{
 		m_indexData.clear();
 	}
-	void CreateHardWareBuffer(ID3D11Device* pd3dDevice, unsigned int usage = D3D11_USAGE_DEFAULT)
+	void CreateHardWareBuffer(ID3D11Device* pd3dDevice, D3D11_USAGE usage = D3D11_USAGE_DEFAULT)
 	{
 		D3D11_BUFFER_DESC bd;
 		memset(&bd, 0, sizeof(bd));

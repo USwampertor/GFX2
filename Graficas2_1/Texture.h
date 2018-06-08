@@ -5,11 +5,17 @@ public:
 	Texture();
 	~Texture();
 	HRESULT CreateRenderTargetView(ID3D11Device* m_pd3dDevice, IDXGISwapChain* m_pSwapChain);
-	HRESULT CreateDSTDescriptor(ID3D11Device* pd3dDevice, D3D11_TEXTURE2D_DESC& descDepth, int width, int height);
-	HRESULT CreateDSVDescriptor(ID3D11Device* pd3dDevice, D3D11_TEXTURE2D_DESC& descDepth, ID3D11DeviceContext* pImmediateContext);
+	HRESULT CreateDSTDescriptor(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext, int width, int height);
+	HRESULT CreateDSVDescriptor(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext);
+	HRESULT CreateDSS(ID3D11Device* pd3dDevice);
 	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
 	ID3D11Texture2D* m_pDepthStencil = nullptr;
 	ID3D11DepthStencilView* m_DepthStencilView = nullptr;
+	ID3D11ShaderResourceView* m_shaderSubResource = nullptr;
+	//From the tutorial
+	//ID3D11DepthStencilState* m_depthStencilState;
+	//ID3D11RasterizerState* m_rasterState;
+	//HRESULT CreateRasterState(ID3D11Device* pd3dDevice,ID3D11DeviceContext* pImmediateContext, D3D11_RASTERIZER_DESC& descRastr);
 };
 Texture::Texture()
 {
@@ -35,10 +41,11 @@ HRESULT Texture::CreateRenderTargetView(ID3D11Device* pd3dDevice, IDXGISwapChain
 	return hr;
 	
 }
-HRESULT Texture::CreateDSTDescriptor(ID3D11Device* pd3dDevice, D3D11_TEXTURE2D_DESC& descDepth, int width, int height)
+HRESULT Texture::CreateDSTDescriptor(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext, int width, int height)
 {
 	HRESULT hr = S_OK;
-	//D3D11_TEXTURE2D_DESC descDepth;
+	D3D11_TEXTURE2D_DESC descDepth;
+	//This allows us to control what type of depth test Direct3D will do for each pixel.
 	memset(&descDepth, 0, sizeof(descDepth));
 	descDepth.Width = width;
 	descDepth.Height = height;
@@ -53,11 +60,8 @@ HRESULT Texture::CreateDSTDescriptor(ID3D11Device* pd3dDevice, D3D11_TEXTURE2D_D
 	descDepth.MiscFlags = 0;
 
 	hr = pd3dDevice->CreateTexture2D(&descDepth, nullptr, &m_pDepthStencil);
-	return hr;
-}
-HRESULT Texture::CreateDSVDescriptor(ID3D11Device* pd3dDevice, D3D11_TEXTURE2D_DESC& descDepth, ID3D11DeviceContext* pImmediateContext)
-{
-	HRESULT hr = S_OK;
+
+	//D3D11_TEXTURE2D_DESC descDepth;
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
 
 	memset(&descDSV, 0, sizeof(descDSV));
@@ -76,3 +80,45 @@ HRESULT Texture::CreateDSVDescriptor(ID3D11Device* pd3dDevice, D3D11_TEXTURE2D_D
 
 	return hr;
 }
+HRESULT Texture::CreateDSVDescriptor(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext)
+{
+	HRESULT hr = S_OK;
+	
+
+	return hr;
+}
+HRESULT Texture::CreateDSS(ID3D11Device* pd3dDevice)
+{
+	D3D11_TEXTURE2D_DESC descDepth;
+	HRESULT hr = S_OK;
+	//hr = pd3dDevice->CreateDepthStencilState(d, &m_depthStencilState);
+	//if (FAILED(hr))
+	//{
+	return hr;
+	//}
+}
+/*HRESULT Texture::CreateRasterState(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext, D3D11_RASTERIZER_DESC& descRastr)
+{
+	HRESULT hr = S_OK;
+	descRastr.AntialiasedLineEnable = false;
+	descRastr.CullMode = D3D11_CULL_BACK;
+	descRastr.DepthBias = 0;
+	descRastr.DepthBiasClamp = 0.0f;
+	descRastr.DepthClipEnable = true;
+	descRastr.FillMode = D3D11_FILL_SOLID;
+	descRastr.FrontCounterClockwise = false;
+	descRastr.MultisampleEnable = false;
+	descRastr.ScissorEnable = false;
+	descRastr.SlopeScaledDepthBias = 0.0f;
+
+	// Create the rasterizer state from the description we just filled out.
+	hr = pd3dDevice->CreateRasterizerState(&descRastr, &m_rasterState);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	// Now set the rasterizer state.
+	pImmediateContext->RSSetState(m_rasterState);
+	return hr;
+}*/
