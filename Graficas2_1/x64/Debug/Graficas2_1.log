@@ -1,10 +1,5 @@
-﻿  Shader.cpp
-c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\inputlayout.h(44): warning C4267: 'argumento': conversión de 'size_t' a 'UINT'; posible pérdida de datos
-c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\shader.h(31): warning C4101: 'str': variable local sin referencia
-c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\shader.h(65): warning C4101: 'str': variable local sin referencia
-  LINK : no se encontr¾ C:\Users\PROPIETARIO\Desktop\fghdgsf\GFX2\x64\Debug\Graficas2_1.exe o no lo gener¾ el ·ltimo vÝnculo incremental; ejecutando vÝnculo completo
-Shader.obj : error LNK2005: ya se defini¾ "public: __cdecl Device::Device(void)" (??0Device@@QEAA@XZ) en Graficas2_1.obj
-Shader.obj : error LNK2005: ya se defini¾ "public: __cdecl Device::~Device(void)" (??1Device@@QEAA@XZ) en Graficas2_1.obj
-Shader.obj : error LNK2005: ya se defini¾ "public: long __cdecl Device::InitializeDevice(struct HWND__ *)" (?InitializeDevice@Device@@QEAAJPEAUHWND__@@@Z) en Graficas2_1.obj
-Shader.obj : error LNK2005: ya se defini¾ "public: void __cdecl Device::Render(struct ID3D11RenderTargetView *)" (?Render@Device@@QEAAXPEAUID3D11RenderTargetView@@@Z) en Graficas2_1.obj
-C:\Users\PROPIETARIO\Desktop\fghdgsf\GFX2\x64\Debug\Graficas2_1.exe : fatal error LNK1169: se encontraron uno o mßs sÝmbolos definidos simultßneamente
+﻿  Graficas2_1.cpp
+c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\inputlayout.h(109): warning C4267: 'argumento': conversión de 'size_t' a 'UINT'; posible pérdida de datos
+c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\texture.h(92): warning C4101: 'descDepth': variable local sin referencia
+c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\graphics_api.h(77): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+  Graficas2_1.vcxproj -> C:\Users\PROPIETARIO\Desktop\fghdgsf\GFX2\x64\Debug\Graficas2_1.exe

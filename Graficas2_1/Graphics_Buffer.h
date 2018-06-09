@@ -95,7 +95,6 @@ private:
 };
 
 template <typename TINDEX>
-
 class IndexBuffer final : public GraphicsBuffer
 {
 public:

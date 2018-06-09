@@ -11,8 +11,8 @@ public:
 	struct color
 	{
 		color() : R(0), G(0), B(0), A(0){};
-		color(int cr,int cg, int cb, int ca) : R(cr), G(cg), B(cb), A(ca) {}
-		int R, G, B, A;
+		color(float cr, float cg, float cb, float ca) : R(cr), G(cg), B(cb), A(ca) {}
+		float R, G, B, A;
 	};
 	vertex m_vertex;
 	color m_color;

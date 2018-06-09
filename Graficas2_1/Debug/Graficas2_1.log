@@ -1,3 +1,4 @@
-﻿  stdafx.cpp
-  Graficas2_1.cpp
-  Graficas2_1.vcxproj -> C:\Users\PROPIETARIO\Documents\Visual Studio 2017\Projects\Graficas2_1\Debug\Graficas2_1.exe
+﻿  Graficas2_1.cpp
+c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\texture.h(92): warning C4101: 'descDepth': variable local sin referencia
+c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\graphics_api.h(78): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+  Graficas2_1.vcxproj -> C:\Users\PROPIETARIO\Desktop\fghdgsf\GFX2\Debug\Graficas2_1.exe
