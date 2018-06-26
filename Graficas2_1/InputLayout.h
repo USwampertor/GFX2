@@ -106,12 +106,19 @@ public:
 	void CreateInputBuffer(ID3D11Device* pd3dDevice, Shader* shader)
 	{
 		
-		HRESULT hr = pd3dDevice->CreateInputLayout(&descvector[0], descvector.size(),shader->m_d3dBlob->GetBufferPointer(), shader->m_d3dBlob->GetBufferSize(), &m_layout);
+		HRESULT hr = pd3dDevice->CreateInputLayout(&descvector[0],
+												   (UINT)descvector.size(),
+												   shader->m_d3dBlob->GetBufferPointer(),
+												   shader->m_d3dBlob->GetBufferSize(),
+												   &m_layout);
 		if (FAILED(hr))
 		{
 			throw std::exception("Failed to create Vertex Buffer you idiot");
 		}
-		shader->m_d3dBlob->Release();
+	}
+	void SetLayout(ID3D11DeviceContext* pImmediateDevice)
+	{
+		pImmediateDevice->IASetInputLayout(m_layout);
 	}
 	//void Write(ID3D11DeviceContext* pDeviceContext, void* pData, size_t numBytes)
 	//{

@@ -2,16 +2,19 @@
 #include "Graphics_Buffer.h"
 #include "VertexType.h"
 #include <d3d11.h>
+#include <vector>
+
+using std::vector;
+
 class Mesh
 {
 public:
 	VertexBuffer<VertexType> m_vertexBuffer;
-	IndexBuffer<int> m_indexBuffer;
-	Mesh()= default;
-	~Mesh()
-	{
+	IndexBuffer<unsigned int> m_indexBuffer;
 
-	}
+	Mesh() = default;
+	virtual ~Mesh() = default;
+
 	void Render(ID3D11DeviceContext* pd3dImmediateContext)
 	{
 		unsigned int stride;
@@ -21,38 +24,67 @@ public:
 		pd3dImmediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer.m_pBuffer , &stride, &offset);
 		pd3dImmediateContext->IASetIndexBuffer(m_indexBuffer.m_pBuffer, DXGI_FORMAT_R32_UINT, offset);
 		pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//pd3dImmediateContext->DrawIndexed(3, 0, 0);
+		pd3dImmediateContext->DrawIndexed(m_indexBuffer.Size(), 0, 0);
 	}
 };
 
-class ExampleTriangle : public Mesh
+class Model
 {
+protected:
+	ID3D11Device* m_pd3dDevice = nullptr;
+	vector<Mesh> m_meshes;
+
 public:
-	
-	ExampleTriangle()
+	Model() = default;
+	Model(ID3D11Device* pd3dDevice) : m_pd3dDevice(pd3dDevice) {}
+	~Model() = default;
+
+	void SetDevice(ID3D11Device* pd3dDevice)
 	{
+		m_pd3dDevice = pd3dDevice;
 	}
-	~ExampleTriangle()
+
+	void Render()
 	{
+		ID3D11DeviceContext* pImmContext;
+
+		m_pd3dDevice->GetImmediateContext(&pImmContext);
+
+		for (auto& mesh : m_meshes)
+		{
+			mesh.Render(pImmContext);
+		}
 	}
-	void InitializeTriangle(ID3D11Device* pd3dDevice)
+
+	void LoadFromFile(const char*) {};
+
+	void CreateTriangle()
 	{
+		m_meshes.emplace_back();
+		auto& mesh = m_meshes.back();
+
+		mesh.m_vertexBuffer.Reserve(3);
+		mesh.m_indexBuffer.Reserve(3);
+
 		VertexType pVertex;
-		pVertex.m_vertex = { -1.0f,-1.0f,0.0f,0.0f };
-		pVertex.m_color = { 0.0f,1.0f,0.0f,1.0f };
-		m_vertexBuffer.Add(pVertex);
-		pVertex.m_vertex = { 0.0f,1.0f,0.0f,0.0f };
-		pVertex.m_color = { 1.0f,0.0f,0.0f,1.0f };
-		m_vertexBuffer.Add(pVertex);
-		pVertex.m_vertex = { 1.0f,-1.0f,0.0f,0.0f };
-		pVertex.m_color = { 0.0f,0.0f,1.0f,1.0f };
-		m_vertexBuffer.Add(pVertex);
-		m_indexBuffer.Add(0);
-		m_indexBuffer.Add(1);
-		m_indexBuffer.Add(2);
-		m_vertexBuffer.CreateHardWareBuffer(pd3dDevice);
-		m_indexBuffer.CreateHardWareBuffer(pd3dDevice);
-	
+		pVertex.position = { -1.0f,-1.0f,0.0f,0.0f };
+		pVertex.color = { 0.0f,1.0f,0.0f,1.0f };
+		mesh.m_vertexBuffer.Add(pVertex);
+
+		pVertex.position = { 0.0f,1.0f,0.0f,0.0f };
+		pVertex.color = { 1.0f,0.0f,0.0f,1.0f };
+		mesh.m_vertexBuffer.Add(pVertex);
+
+		pVertex.position = { 1.0f,-1.0f,0.0f,0.0f };
+		pVertex.color = { 0.0f,0.0f,1.0f,1.0f };
+		mesh.m_vertexBuffer.Add(pVertex);
+
+		mesh.m_indexBuffer.Add(0);
+		mesh.m_indexBuffer.Add(1);
+		mesh.m_indexBuffer.Add(2);
+
+		mesh.m_vertexBuffer.CreateHardWareBuffer(m_pd3dDevice);
+		mesh.m_indexBuffer.CreateHardWareBuffer(m_pd3dDevice);
 	}
 	
 };

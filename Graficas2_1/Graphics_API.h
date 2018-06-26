@@ -12,13 +12,14 @@ using std::vector;
 class Graphics_API
 {
 public:
-	
+	VertexShader m_vShader;
+	PixelShader m_pShader;
+	InputLayout m_input;
 	Device m_Device;
 	Texture m_texture;
 	ViewPort m_viewPort;
 	//std::vector<Mesh> MeshList;
-	ExampleTriangle m_triangle;
-	std::vector<Mesh> m_Meshlist;
+	Model m_Meshlist;
 	Graphics_API();
 	~Graphics_API();
 	HRESULT InitDevice(HWND g_hWnd);
@@ -77,25 +78,17 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	m_viewPort.CreateViewPort(m_Device.width,m_Device.height,1.0f,1.0f);
 	//ProjectionMatrix(FOV, Ratio);
 	//OrthogonalMatrix(m_Device.width, m_Device.height);
-	VertexShader vShader;
-	PixelShader pShader;
-	hr = vShader.Compile("color.vs", "ColorVertexShader", "vs_5_0", 0);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	hr = pShader.Compile("color.ps", "ColorPixelShader", "ps_5_0", 0);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	vShader.SetShader(m_Device.m_pImmediateContext);
-	pShader.SetShader(m_Device.m_pImmediateContext);
-	InputLayout input;
-	input.SetVertex();
-	input.SetColor();
-	input.CreateInputBuffer(m_Device.m_pd3dDevice, &vShader);
 	
+	m_vShader.CreateFromFile(m_Device.m_pd3dDevice, "color.vs", "ColorVertexShader");
+	m_pShader.CreateFromFile(m_Device.m_pd3dDevice, "color.ps", "ColorPixelShader");
+
+	m_vShader.SetShader(m_Device.m_pImmediateContext);
+	m_pShader.SetShader(m_Device.m_pImmediateContext);
+
+	m_input.SetVertex();
+	m_input.SetColor();
+	m_input.CreateInputBuffer(m_Device.m_pd3dDevice, &m_vShader);
+
 	//ID3D11ShaderReflection* reflection = nullptr;
 	//D3D11_SHADER_DESC vShaderDescriptor;
 	//hr = D3DReflect(vShader.m_d3dBlob->GetBufferPointer(), vShader.m_d3dBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection);
@@ -109,16 +102,23 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	//	return hr;
 	//}
 	//input.Parametrize(reflection, vShaderDescriptor.InputParameters);
-
-	m_triangle.InitializeTriangle(m_Device.m_pd3dDevice);
-	m_Meshlist.push_back(m_triangle);
+	m_Meshlist.SetDevice(m_Device.m_pd3dDevice);
+	m_Meshlist.CreateTriangle();
 	return hr;
 }
 void Graphics_API::Render()
 {
+	//
+	m_vShader.SetShader(m_Device.m_pImmediateContext);
+	m_pShader.SetShader(m_Device.m_pImmediateContext);
+	m_input.SetLayout(m_Device.m_pImmediateContext);
+	//
+	float color[4] = { 1.0f,0.0f,0.0f,1.0f };
+	m_Device.m_pImmediateContext->ClearRenderTargetView(m_texture.m_pRenderTargetView, color);
 
-	m_triangle.Render(m_Device.m_pImmediateContext);
-	m_Device.Render(m_texture.m_pRenderTargetView,m_Meshlist);
+	m_Meshlist.Render();
+
+	m_Device.m_pSwapChain->Present(DXGI_SWAP_EFFECT_DISCARD, DXGI_PRESENT_DO_NOT_WAIT);
 }
 /*void Graphics_API::ProjectionMatrix(float& fov, float& aspectRatio)
 {

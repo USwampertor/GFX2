@@ -1,33 +1,39 @@
 #pragma once
-class VertexType
+struct Vertex
 {
-public:
-	struct vertex 
-	{
-		vertex() : x(0), y(0), z(0), w(0) {};
-		vertex(float vx, float vy, float vz, float vw) : x(vx), y(vy), z(vz), w(vw) {}
-		float x, y, z, w;
-	};
-	struct color
-	{
-		color() : R(0), G(0), B(0), A(0){};
-		color(float cr, float cg, float cb, float ca) : R(cr), G(cg), B(cb), A(ca) {}
-		float R, G, B, A;
-	};
-	vertex m_vertex;
-	color m_color;
-	VertexType()
-	{
+	Vertex() = default;
+	Vertex(float vx, float vy=0.0f, float vz = 0.0f, float vw = 1.0f)
+		: x(vx),
+		  y(vy),
+		  z(vz),
+		  w(vw)
+	{}
+	
+	float x;
+	float y;
+	float z;
+	float w;
+};
 
-	}
-	~VertexType()
-	{
-		Clear();
-	}
-	void Clear()
-	{
-		m_vertex = { 0.0f,0.0f,0.0f,0.0f };
-		m_color = { 0,0,0,0 };
-	}
+struct Color
+{
+	Color() = default;
+	Color(float cr, float cg = 0.0f, float cb = 0.0f, float ca = 1.0f)
+		: R(cr),
+		  G(cg),
+		  B(cb),
+		  A(ca)
+	{}
+
+	float R = 0.0f;
+	float G = 0.0f;
+	float B = 0.0f;
+	float A = 1.0f;
+};
+
+struct VertexType
+{
+	Vertex position;
+	Color color;
 };
 

@@ -90,11 +90,9 @@ public:
 	}
 	void Render(ID3D11RenderTargetView* pRenderTargetView,std::vector<Mesh> meshvector)
 	{
-		float color[4] = {1.0f,0.0f,0.0f,1.0f };
-		m_pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
-		meshvector[0].Render(m_pImmediateContext);
-		m_pSwapChain->Present(DXGI_SWAP_EFFECT_DISCARD, DXGI_PRESENT_DO_NOT_WAIT);
+		
 	}
+
 	ID3D11Device* m_pd3dDevice = nullptr;
 	ID3D11DeviceContext* m_pImmediateContext = nullptr;
 	IDXGISwapChain* m_pSwapChain = nullptr;

@@ -104,6 +104,11 @@ public:
 		Clear();
 	}
 
+	std::size_t Size()
+	{
+		return m_indexData.size();
+	}
+
 	void Reserve(size_t numObjects)
 	{
 		m_indexData.reserve(numObjects);
