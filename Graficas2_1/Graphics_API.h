@@ -23,7 +23,7 @@ public:
 	Graphics_API();
 	~Graphics_API();
 	HRESULT InitDevice(HWND g_hWnd);
-	
+	void SetShaders();
 	void Render();
 private:
 	float screenDepth = 1000.0f, screenNear = 0.1f;
@@ -76,6 +76,7 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	//}
 	//SetViewPort
 	m_viewPort.CreateViewPort(m_Device.width,m_Device.height,1.0f,1.0f);
+	m_viewPort.SetViewPort(m_Device.m_pImmediateContext);
 	//ProjectionMatrix(FOV, Ratio);
 	//OrthogonalMatrix(m_Device.width, m_Device.height);
 	
@@ -106,18 +107,19 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	m_Meshlist.CreateTriangle();
 	return hr;
 }
-void Graphics_API::Render()
+void Graphics_API::SetShaders()
 {
-	//
 	m_vShader.SetShader(m_Device.m_pImmediateContext);
 	m_pShader.SetShader(m_Device.m_pImmediateContext);
 	m_input.SetLayout(m_Device.m_pImmediateContext);
-	//
-	float color[4] = { 1.0f,0.0f,0.0f,1.0f };
+}
+void Graphics_API::Render()
+{
+	
+	float color[4] = { 1.0f,0.0f,1.0f,1.0f };
 	m_Device.m_pImmediateContext->ClearRenderTargetView(m_texture.m_pRenderTargetView, color);
-
+	m_Device.m_pImmediateContext->ClearDepthStencilView(m_texture.m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	m_Meshlist.Render();
-
 	m_Device.m_pSwapChain->Present(DXGI_SWAP_EFFECT_DISCARD, DXGI_PRESENT_DO_NOT_WAIT);
 }
 /*void Graphics_API::ProjectionMatrix(float& fov, float& aspectRatio)

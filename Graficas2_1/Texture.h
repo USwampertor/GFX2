@@ -1,21 +1,35 @@
 #pragma once
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 class Texture
 {
 public:
 	Texture();
 	~Texture();
-	HRESULT CreateRenderTargetView(ID3D11Device* m_pd3dDevice, IDXGISwapChain* m_pSwapChain);
-	HRESULT CreateDSTDescriptor(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext, int width, int height);
-	HRESULT CreateDSVDescriptor(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext);
+	HRESULT Create2DTexture();
+	HRESULT CreateRenderTargetView(
+		ID3D11Device* m_pd3dDevice, 
+		IDXGISwapChain* m_pSwapChain);
+	HRESULT CreateDSTDescriptor(
+		ID3D11Device* pd3dDevice, 
+		ID3D11DeviceContext* pImmediateContext, 
+		int width, 
+		int height);
+	HRESULT CreateDSVDescriptor(
+		ID3D11Device* pd3dDevice, 
+		ID3D11DeviceContext* pImmediateContext);
 	HRESULT CreateDSS(ID3D11Device* pd3dDevice);
 	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
 	ID3D11Texture2D* m_pDepthStencil = nullptr;
 	ID3D11DepthStencilView* m_DepthStencilView = nullptr;
 	ID3D11ShaderResourceView* m_shaderSubResource = nullptr;
-	//From the tutorial
-	//ID3D11DepthStencilState* m_depthStencilState;
-	//ID3D11RasterizerState* m_rasterState;
-	//HRESULT CreateRasterState(ID3D11Device* pd3dDevice,ID3D11DeviceContext* pImmediateContext, D3D11_RASTERIZER_DESC& descRastr);
+	/*From the tutorial
+	ID3D11DepthStencilState* m_depthStencilState;
+	ID3D11RasterizerState* m_rasterState;
+	HRESULT CreateRasterState(
+		ID3D11Device* pd3dDevice,
+		ID3D11DeviceContext* pImmediateContext, 
+		D3D11_RASTERIZER_DESC& descRastr);*/
 };
 Texture::Texture()
 {
@@ -96,6 +110,10 @@ HRESULT Texture::CreateDSS(ID3D11Device* pd3dDevice)
 	//{
 	return hr;
 	//}
+}
+HRESULT Texture::Create2DTexture()
+{
+
 }
 /*HRESULT Texture::CreateRasterState(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext, D3D11_RASTERIZER_DESC& descRastr)
 {

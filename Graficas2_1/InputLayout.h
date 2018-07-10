@@ -35,7 +35,7 @@ public:
 		index.SemanticIndex = 0;
 		index.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		index.InputSlot = 0;
-		index.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+		index.AlignedByteOffset = 0;
 		index.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		index.InstanceDataStepRate = 0;
 		Add(index);
@@ -129,7 +129,7 @@ public:
 	//	//here we write all the shit we need, the thing is that this is not relative to anything specific
 	//
 	//
-	//	//we later discard the original thing because we dont need it anymore
+	//	//we later discard the original thing because we don't need it anymore
 	//	pDeviceContext->Unmap(m_pBuffer, 0);
 	//}
 };

@@ -20,9 +20,9 @@ public:
 		unsigned int stride;
 		unsigned int offset;
 		stride = sizeof(VertexType);
-		offset = sizeof(float);
+		offset = 0;//sizeof(float);
 		pd3dImmediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer.m_pBuffer , &stride, &offset);
-		pd3dImmediateContext->IASetIndexBuffer(m_indexBuffer.m_pBuffer, DXGI_FORMAT_R32_UINT, offset);
+		pd3dImmediateContext->IASetIndexBuffer(m_indexBuffer.m_pBuffer, DXGI_FORMAT_R32_UINT, 0);
 		pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		pd3dImmediateContext->DrawIndexed(m_indexBuffer.Size(), 0, 0);
 	}
@@ -67,17 +67,20 @@ public:
 		mesh.m_indexBuffer.Reserve(3);
 
 		VertexType pVertex;
-		pVertex.position = { -1.0f,-1.0f,0.0f,0.0f };
+		
+		pVertex.position = { -1.0f,-1.0f,0.0f,1.0f };
 		pVertex.color = { 0.0f,1.0f,0.0f,1.0f };
 		mesh.m_vertexBuffer.Add(pVertex);
 
-		pVertex.position = { 0.0f,1.0f,0.0f,0.0f };
-		pVertex.color = { 1.0f,0.0f,0.0f,1.0f };
+		pVertex.position = { 0.0f,1.0f,0.0f,1.0f };
+		pVertex.color = { 1.0f,1.0f,1.0f,1.0f };
 		mesh.m_vertexBuffer.Add(pVertex);
 
-		pVertex.position = { 1.0f,-1.0f,0.0f,0.0f };
+		pVertex.position = { 1.0f,-1.0f,0.0f,1.0f };
 		pVertex.color = { 0.0f,0.0f,1.0f,1.0f };
 		mesh.m_vertexBuffer.Add(pVertex);
+
+		
 
 		mesh.m_indexBuffer.Add(0);
 		mesh.m_indexBuffer.Add(1);
