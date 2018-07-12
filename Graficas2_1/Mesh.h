@@ -3,7 +3,7 @@
 #include "VertexType.h"
 #include <d3d11.h>
 #include <vector>
-
+#include "Texture.h"
 using std::vector;
 
 class Mesh
@@ -11,7 +11,7 @@ class Mesh
 public:
 	VertexBuffer<VertexType> m_vertexBuffer;
 	IndexBuffer<unsigned int> m_indexBuffer;
-
+	Texture m_texture;
 	Mesh() = default;
 	virtual ~Mesh() = default;
 
@@ -65,22 +65,33 @@ public:
 
 		mesh.m_vertexBuffer.Reserve(3);
 		mesh.m_indexBuffer.Reserve(3);
-
+		ID3D11DeviceContext* pImmContext;
+		m_pd3dDevice->GetImmediateContext(&pImmContext);
+		mesh.m_texture.LoadFromFile("sheikah.jpg", m_pd3dDevice, pImmContext);
+		
 		VertexType pVertex;
 		
 		pVertex.position = { -1.0f,-1.0f,0.0f,1.0f };
-		pVertex.color = { 0.0f,1.0f,0.0f,1.0f };
+		pVertex.color = { 1.0f,0.5f,0.25f,1.0f };
+		pVertex.u = 0.0f ; pVertex.v = 1.0f;
 		mesh.m_vertexBuffer.Add(pVertex);
 
 		pVertex.position = { 0.0f,1.0f,0.0f,1.0f };
-		pVertex.color = { 1.0f,1.0f,1.0f,1.0f };
+		pVertex.color = { 0.5f,1.0f, 0.0f,1.0f };		
+		pVertex.u = 0.5f; pVertex.v = 1.0f;
+
+
 		mesh.m_vertexBuffer.Add(pVertex);
 
 		pVertex.position = { 1.0f,-1.0f,0.0f,1.0f };
-		pVertex.color = { 0.0f,0.0f,1.0f,1.0f };
+		pVertex.color = { 0.25f, 0.5f, 1.0f,1.0f };
+		pVertex.u = 1.0f; pVertex.v = 1.0f;
+
+
 		mesh.m_vertexBuffer.Add(pVertex);
 
-		
+		//Deberia de tener un Load Resources el otra parte. Al cargar el modelo agarras
+		//las texturas y todos sus componentes
 
 		mesh.m_indexBuffer.Add(0);
 		mesh.m_indexBuffer.Add(1);

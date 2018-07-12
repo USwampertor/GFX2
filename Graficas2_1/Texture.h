@@ -1,12 +1,19 @@
 #pragma once
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include <vector>
 class Texture
 {
+private:
+	int m_width, m_height;
+	//stbi_uc* m_fileData;
 public:
-	Texture();
-	~Texture();
-	HRESULT Create2DTexture();
+	Texture() = default;
+	~Texture() = default;
+	HRESULT LoadFromFile(
+		const char* fileName, 
+		ID3D11Device* pd3dDevice, 
+		ID3D11DeviceContext* pImmediateContext);
 	HRESULT CreateRenderTargetView(
 		ID3D11Device* m_pd3dDevice, 
 		IDXGISwapChain* m_pSwapChain);
@@ -23,6 +30,7 @@ public:
 	ID3D11Texture2D* m_pDepthStencil = nullptr;
 	ID3D11DepthStencilView* m_DepthStencilView = nullptr;
 	ID3D11ShaderResourceView* m_shaderSubResource = nullptr;
+	std::vector<unsigned char> m_textureData;
 	/*From the tutorial
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11RasterizerState* m_rasterState;
@@ -31,14 +39,6 @@ public:
 		ID3D11DeviceContext* pImmediateContext, 
 		D3D11_RASTERIZER_DESC& descRastr);*/
 };
-Texture::Texture()
-{
-}
-
-
-Texture::~Texture()
-{
-}
 
 HRESULT Texture::CreateRenderTargetView(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain)
 {
@@ -55,7 +55,11 @@ HRESULT Texture::CreateRenderTargetView(ID3D11Device* pd3dDevice, IDXGISwapChain
 	return hr;
 	
 }
-HRESULT Texture::CreateDSTDescriptor(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext, int width, int height)
+HRESULT Texture::CreateDSTDescriptor(
+	ID3D11Device* pd3dDevice, 
+	ID3D11DeviceContext* pImmediateContext, 
+	int width, 
+	int height)
 {
 	HRESULT hr = S_OK;
 	D3D11_TEXTURE2D_DESC descDepth;
@@ -111,9 +115,57 @@ HRESULT Texture::CreateDSS(ID3D11Device* pd3dDevice)
 	return hr;
 	//}
 }
-HRESULT Texture::Create2DTexture()
+HRESULT Texture::LoadFromFile(
+	const char* fileName, 
+	ID3D11Device* pd3dDevice, 
+	ID3D11DeviceContext* pImmediateContext)
 {
+	D3D11_TEXTURE2D_DESC descTexture;
+	int byteperpixel = 0;
+	auto m_fileData = stbi_load(fileName, &m_width, &m_height, &byteperpixel, 4);
+	HRESULT hr = S_OK;
+	
+	if (!m_fileData)
+	{
+		return S_FALSE;
+	}
 
+	
+	memset(&descTexture, 0, sizeof(descTexture));
+	
+	descTexture.Width = m_width;
+	descTexture.Height = m_height;
+	descTexture.MipLevels = 1;
+	descTexture.ArraySize = 1;
+	descTexture.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	descTexture.SampleDesc.Count = 1;
+	descTexture.SampleDesc.Quality = 0;
+	descTexture.Usage = D3D11_USAGE_DEFAULT;
+	descTexture.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	descTexture.CPUAccessFlags = 0;
+	descTexture.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA texturedataBuffer;
+
+	memset(&texturedataBuffer, 0, sizeof(texturedataBuffer));
+	std::vector<unsigned char> dataBuffer;
+	dataBuffer.resize(m_width*m_height*byteperpixel);
+	//Nuestro vector tiene el tamaño de todos los pixeles que se encuentran
+	//En la textura multiplicado por cuanta informacion tiene cada uno
+	///
+	std::memcpy(&dataBuffer[0], &m_fileData[0], m_width*m_height*byteperpixel);
+	//Ahora estamos pasando la información de nuestro unsigned char a un vector con memcpy
+
+	//memmove(&texturedataBuffer, &m_fileData[0], m_height*m_width);
+	//texturedataBuffer.pSysMem = &m_fileData[0];
+	texturedataBuffer.pSysMem = &dataBuffer[0]; //dataBuffer.data();
+	///
+	hr = pd3dDevice->CreateTexture2D(&descTexture, &texturedataBuffer, &m_pDepthStencil);//
+	if (FAILED(hr))
+	{
+		return hr;	
+	}
+	return hr;
 }
 /*HRESULT Texture::CreateRasterState(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pImmediateContext, D3D11_RASTERIZER_DESC& descRastr)
 {

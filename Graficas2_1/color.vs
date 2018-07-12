@@ -1,13 +1,15 @@
 struct VertexInputType
 {
-    float4 position : POSITION;
-    float4 color : COLOR;
+    float4 position : POSITION0;
+    float4 color : COLOR0;
+	float4 normal : NORMAL0;
+	float2 texcoord : TEXCOORD0;
 };
 
 struct PixelInputType
 {
     float4 position : SV_POSITION;
-    float4 color : COLOR;
+    float4 color : COLOR0;
 };
 
 PixelInputType ColorVertexShader(VertexInputType input)

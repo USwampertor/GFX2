@@ -86,7 +86,7 @@ public:
 		//here we write all the shit we need, the thing is that this is not relative to anything specific
 
 
-		//we later discard the original thing because we dont need it anymore
+		//we later discard the original thing because we don't need it anymore
 		pDeviceContext->Unmap(m_pBuffer, 0);
 	}
 	

@@ -86,8 +86,9 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	m_vShader.SetShader(m_Device.m_pImmediateContext);
 	m_pShader.SetShader(m_Device.m_pImmediateContext);
 
-	m_input.SetVertex();
-	m_input.SetColor();
+	m_input.SetInputDesc();
+	//m_input.SetVertex();
+	//m_input.SetColor();
 	m_input.CreateInputBuffer(m_Device.m_pd3dDevice, &m_vShader);
 
 	//ID3D11ShaderReflection* reflection = nullptr;
