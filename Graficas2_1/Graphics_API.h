@@ -80,8 +80,8 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	//ProjectionMatrix(FOV, Ratio);
 	//OrthogonalMatrix(m_Device.width, m_Device.height);
 	
-	m_vShader.CreateFromFile(m_Device.m_pd3dDevice, "color.vs", "ColorVertexShader");
-	m_pShader.CreateFromFile(m_Device.m_pd3dDevice, "color.ps", "ColorPixelShader");
+	m_vShader.CreateFromFile(m_Device.m_pd3dDevice, "VS.hlsl", "ColorVertexShader");
+	m_pShader.CreateFromFile(m_Device.m_pd3dDevice, "PS.hlsl", "ColorPixelShader");
 
 	m_vShader.SetShader(m_Device.m_pImmediateContext);
 	m_pShader.SetShader(m_Device.m_pImmediateContext);

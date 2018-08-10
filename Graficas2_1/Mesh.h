@@ -4,6 +4,7 @@
 #include <d3d11.h>
 #include <vector>
 #include "Texture.h"
+#include <assimp/Importer.hpp>
 using std::vector;
 
 class Mesh
@@ -21,10 +22,14 @@ public:
 		unsigned int offset;
 		stride = sizeof(VertexType);
 		offset = 0;//sizeof(float);
-		pd3dImmediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer.m_pBuffer , &stride, &offset);
-		pd3dImmediateContext->IASetIndexBuffer(m_indexBuffer.m_pBuffer, DXGI_FORMAT_R32_UINT, 0);
-		pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		pd3dImmediateContext->DrawIndexed(m_indexBuffer.Size(), 0, 0);
+		pd3dImmediateContext->IASetVertexBuffers(
+			0, 1, &m_vertexBuffer.m_pBuffer , &stride, &offset);
+		pd3dImmediateContext->IASetIndexBuffer(
+			m_indexBuffer.m_pBuffer, DXGI_FORMAT_R32_UINT, 0);
+		pd3dImmediateContext->IASetPrimitiveTopology(
+			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		pd3dImmediateContext->DrawIndexed(
+			m_indexBuffer.Size(), 0, 0);
 	}
 };
 
@@ -60,6 +65,7 @@ public:
 
 	void CreateTriangle()
 	{
+		//to do: send every set to the render thing
 		m_meshes.emplace_back();
 		auto& mesh = m_meshes.back();
 
@@ -68,17 +74,21 @@ public:
 		ID3D11DeviceContext* pImmContext;
 		m_pd3dDevice->GetImmediateContext(&pImmContext);
 		mesh.m_texture.LoadFromFile("sheikah.jpg", m_pd3dDevice, pImmContext);
-		
+		mesh.m_texture.CreateShaderSampler(m_pd3dDevice);
+		mesh.m_texture.SetShaderSampler(m_pd3dDevice);
 		VertexType pVertex;
 		
 		pVertex.position = { -1.0f,-1.0f,0.0f,1.0f };
 		pVertex.color = { 1.0f,0.5f,0.25f,1.0f };
+		
 		pVertex.u = 0.0f ; pVertex.v = 1.0f;
+		
 		mesh.m_vertexBuffer.Add(pVertex);
 
 		pVertex.position = { 0.0f,1.0f,0.0f,1.0f };
 		pVertex.color = { 0.5f,1.0f, 0.0f,1.0f };		
-		pVertex.u = 0.5f; pVertex.v = 1.0f;
+		
+		pVertex.u = 0.5f; pVertex.v = 0.0f;
 
 
 		mesh.m_vertexBuffer.Add(pVertex);
