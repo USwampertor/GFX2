@@ -14,7 +14,7 @@ public:
 	{
 		if (m_pBuffer)
 		{
-			m_pBuffer->Release();
+			//m_pBuffer->Release();
 		}
 	}
 ///

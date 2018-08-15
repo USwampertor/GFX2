@@ -1,5 +1,6 @@
 ﻿  Graficas2_1.cpp
-c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\texture.h(186): warning C4101: 'descDepth': variable local sin referencia
-c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\mesh.h(32): warning C4267: 'argumento': conversión de 'size_t' a 'UINT'; posible pérdida de datos
-c:\users\propietario\desktop\fghdgsf\gfx2\graficas2_1\graphics_api.h(78): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
-  Graficas2_1.vcxproj -> C:\Users\PROPIETARIO\Desktop\fghdgsf\GFX2\x64\Debug\Graficas2_1.exe
+c:\users\propietario\documents\6to cuatri\gfx2\graficas2_1\texture.h(186): warning C4101: 'descDepth': variable local sin referencia
+c:\users\propietario\documents\6to cuatri\gfx2\thirdparty\assimp\incl\assimp\material.inl(91): error C2589: '(': símbolo (token) no válido en el lado derecho de '::'
+  c:\users\propietario\documents\6to cuatri\gfx2\thirdparty\assimp\incl\assimp\material.inl(91): note: Diagnóstico en la función 'aiReturn aiMaterial::Get(const char *,unsigned int,unsigned int,Type *,unsigned int *) const' generada por el compilador
+c:\users\propietario\documents\6to cuatri\gfx2\graficas2_1\mesh.h(34): warning C4267: 'argumento': conversión de 'size_t' a 'UINT'; posible pérdida de datos
+c:\users\propietario\documents\6to cuatri\gfx2\graficas2_1\graphics_api.h(78): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos

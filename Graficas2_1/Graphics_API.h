@@ -105,7 +105,8 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	//}
 	//input.Parametrize(reflection, vShaderDescriptor.InputParameters);
 	m_Meshlist.SetDevice(m_Device.m_pd3dDevice);
-	m_Meshlist.CreateTriangle();
+	//m_Meshlist.CreateTriangle();
+	m_Meshlist.LoadFromFile("max.obj");
 	return hr;
 }
 void Graphics_API::SetShaders()

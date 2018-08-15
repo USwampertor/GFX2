@@ -5,6 +5,8 @@
 #include <vector>
 #include "Texture.h"
 #include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 using std::vector;
 
 class Mesh
@@ -61,7 +63,89 @@ public:
 		}
 	}
 
-	void LoadFromFile(const char*) {};
+	void LoadFromFile(const char* filePath)
+	{
+		Assimp::Importer modelImport;
+		const aiScene* scene = modelImport.ReadFile(filePath, aiProcess_Triangulate);
+		if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+		{
+			//throw std::exception(
+			//	"Model::LoadFromFile - Failed to load Model");
+			std::string errorMessage = modelImport.GetErrorString();
+			std::cout << "Error loading model... Loading default Error Model" << std::endl;
+			scene = modelImport.ReadFile("errorModel.stl", aiProcess_Triangulate);
+			if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+			{
+				//throw std::exception("Model::LoadFromFile - Failed to load ErrorModel");
+				std::cout << "Couldn't Load Error model..." << std::endl;
+			}
+			return;
+		}
+		ProcessNode(scene->mRootNode, scene);
+	}
+	void ProcessNode(aiNode* node, const aiScene* s)
+	{
+		ID3D11DeviceContext* pImmContext;
+		m_pd3dDevice->GetImmediateContext(&pImmContext);
+		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+		{
+			aiMesh* aimesh = s->mMeshes[node->mMeshes[i]];
+			m_meshes.push_back(ProcessMesh(aimesh, s));
+		}
+
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
+		{
+
+			ProcessNode(node->mChildren[i], s);
+		}
+	}
+	Mesh ProcessMesh(aiMesh* aimesh, const aiScene* s)
+	{
+		Mesh m;
+		for (unsigned int i = 0; i < aimesh->mNumVertices; ++i)
+		{
+			VertexType pvertex;
+
+			pvertex.position.x = aimesh->mVertices[i].x;
+			pvertex.position.y = aimesh->mVertices[i].y;
+			pvertex.position.z = aimesh->mVertices[i].z;
+
+			pvertex.normal.x = aimesh->mNormals[i].x;
+			pvertex.normal.y = aimesh->mNormals[i].y;
+			pvertex.normal.z = aimesh->mNormals[i].z;
+			if (aimesh->mTextureCoords[0])
+			{
+				pvertex.u = aimesh->mTextureCoords[0][i].x;
+				pvertex.v = aimesh->mTextureCoords[0][i].y;
+			}
+			else
+			{
+				pvertex.u = 0.0f; pvertex.v = 0.0f;
+			}
+			m.m_vertexBuffer.Add(pvertex);
+		}
+		for (unsigned int f = 0; f < aimesh->mNumFaces; ++f)
+		{
+			aiFace face = aimesh->mFaces[f];
+			for (unsigned int j = 0; j < face.mNumIndices; ++j)
+			{
+				m.m_indexBuffer.Add(face.mIndices[j]);
+			}
+		}
+		if (aimesh->mMaterialIndex >= 0)
+		{
+			//aiMaterial *material = s->mMaterials[aimesh->mMaterialIndex];
+			//m_textures = loadMaterials(material, aiTextureType_SPECULAR, "texture_diffuse");
+			//
+			//aiMaterial *material = s->mMaterials[aimesh->mMaterialIndex];
+			//m_textures = loadMaterials(material, aiTextureType_SPECULAR, "texture_diffuse");
+
+		}
+		m.m_vertexBuffer.CreateHardWareBuffer(m_pd3dDevice);
+		m.m_indexBuffer.CreateHardWareBuffer(m_pd3dDevice);
+		return m;
+	}
+
 
 	void CreateTriangle()
 	{
