@@ -8,10 +8,12 @@
 #include "Shader.h"
 #include "InputLayout.h"
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 using std::vector;
 class Graphics_API
 {
 public:
+	DirectX::XMMATRIX m_World, m_View, m_Projection;
 	VertexShader m_vShader;
 	PixelShader m_pShader;
 	InputLayout m_input;
@@ -26,7 +28,7 @@ public:
 	void SetShaders();
 	void Render();
 private:
-	float screenDepth = 1000.0f, screenNear = 0.1f;
+	float screenDepth = 1000.0f, screenNear = 3.0f;
 	float FOV = 0;
 	
 };
@@ -56,7 +58,8 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 		return hr;
 	}
 	//CreateDepthStencilTexture descriptor
-	hr = m_texture.CreateDSTDescriptor(m_Device.m_pd3dDevice, m_Device.m_pImmediateContext, m_Device.width, m_Device.height);
+	hr = m_texture.CreateDSTDescriptor(
+			m_Device.m_pd3dDevice, m_Device.m_pImmediateContext, m_Device.width, m_Device.height);
 	if (FAILED(hr))
 	{
 		return hr;
@@ -104,6 +107,23 @@ HRESULT Graphics_API::InitDevice(HWND g_hWnd)
 	//	return hr;
 	//}
 	//input.Parametrize(reflection, vShaderDescriptor.InputParameters);
+	m_World = DirectX::XMMatrixIdentity();
+
+	DirectX::XMVECTOR position;
+	position = DirectX::XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f);
+
+	DirectX::XMVECTOR objective;
+	objective = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+	DirectX::XMVECTOR up;
+	up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
+
+	m_View = DirectX::XMMatrixLookAtLH(position, objective, up);
+
+	m_Projection = DirectX::XMMatrixPerspectiveFovLH((75.0f*3.141592f / 180.0f), m_Device.width / m_Device.height, screenNear, screenDepth);
+	///Las matrices las tengo que definir en el VERTEX tengo que crear el buffer para las 3 matrices
+	///
+
 	m_Meshlist.SetDevice(m_Device.m_pd3dDevice);
 	//m_Meshlist.CreateTriangle();
 	m_Meshlist.LoadFromFile("max.obj");

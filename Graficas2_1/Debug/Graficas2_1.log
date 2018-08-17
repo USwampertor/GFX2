@@ -1,5 +1,6 @@
 ﻿  Graficas2_1.cpp
 c:\users\propietario\documents\6to cuatri\gfx2\graficas2_1\texture.h(186): warning C4101: 'descDepth': variable local sin referencia
-c:\users\propietario\documents\6to cuatri\gfx2\graficas2_1\graphics_api.h(78): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+c:\users\propietario\documents\6to cuatri\gfx2\graficas2_1\graphics_api.h(81): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+c:\users\propietario\documents\6to cuatri\gfx2\graficas2_1\graphics_api.h(123): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
   Graficas2_1.vcxproj -> C:\Users\PROPIETARIO\Documents\6to Cuatri\GFX2\Debug\Graficas2_1.exe
   Graficas2_1.vcxproj -> C:\Users\PROPIETARIO\Documents\6to Cuatri\GFX2\Debug\Graficas2_1.pdb (Full PDB)

@@ -17,19 +17,23 @@ public:
 	Texture m_texture;
 	Mesh() = default;
 	virtual ~Mesh() = default;
-
+	unsigned int m_indexStart, m_indexFinish;
 	void Render(ID3D11DeviceContext* pd3dImmediateContext)
 	{
 		unsigned int stride;
 		unsigned int offset;
 		stride = sizeof(VertexType);
 		offset = 0;//sizeof(float);
+		
 		pd3dImmediateContext->IASetVertexBuffers(
 			0, 1, &m_vertexBuffer.m_pBuffer , &stride, &offset);
+		
 		pd3dImmediateContext->IASetIndexBuffer(
 			m_indexBuffer.m_pBuffer, DXGI_FORMAT_R32_UINT, 0);
+		
 		pd3dImmediateContext->IASetPrimitiveTopology(
 			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		
 		pd3dImmediateContext->DrawIndexed(
 			m_indexBuffer.Size(), 0, 0);
 	}
